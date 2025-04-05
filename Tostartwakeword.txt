@@ -1,0 +1,46 @@
+pip install vosk sounddevice
+
+
+download it 
+https://alphacephei.com/vosk/models
+small-en-us0.15 file
+
+run 
+/vosk-model
+
+
+
+usrvin roseeai.py
+
+from wake_word import is_wake_word
+
+while True:
+    if is_wake_word():
+        speak("Yes, I'm listening")
+        user_input = listen()
+        # continue conversation as usual
+
+
+chave in roseeai.py 
+wherw rosee respond when she deact word wake up word 
+
+from config import load_config
+
+user_name = load_config().get("user_name", "Hexgon")  # Default to Hexgon
+
+def on_wake_word():
+    speak(f"Hey, {user_name}!")
+edit 
+
+
+config.json
+
+
+{
+  "user_name": "Hexgon",
+  ...
+}
+
+
+
+

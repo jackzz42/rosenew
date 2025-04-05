@@ -1,0 +1,38 @@
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from emotion_net import EmotionRNN
+from transformers import AutoTokenizer
+
+tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
+labels = ["friendly", "romantic", "angry", "caring"]
+label_map = {label: i for i, label in enumerate(labels)}
+
+# Sample training data (add more later)
+training_data = [
+    ("I love you so much", "romantic"),
+    ("Hey man, how are you?", "friendly"),
+    ("Leave me alone!", "angry"),
+    ("It's okay, I'm here for you", "caring")
+]
+
+model = EmotionRNN(vocab_size=tokenizer.vocab_size, hidden_dim=64, output_size=4)
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+for epoch in range(300):
+    total_loss = 0
+    for text, label in training_data:
+        tokens = tokenizer.encode(text, return_tensors="pt", truncation=True, max_length=30)
+        label_tensor = torch.tensor([label_map[label]])
+        optimizer.zero_grad()
+        output = model(tokens)
+        loss = criterion(output, label_tensor)
+        loss.backward()
+        optimizer.step()
+        total_loss += loss.item()
+    if epoch % 50 == 0:
+        print(f"Epoch {epoch}, Loss: {total_loss:.4f}")
+
+torch.save(model.state_dict(), "emotion_model.pth")
+print("Model saved as emotion_model.pth")

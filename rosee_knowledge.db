@@ -1,2 +1,30 @@
-from knowledge import init_db
-init_db()
+
+import sqlite3
+
+# Initialize or reset the database
+conn = sqlite3.connect("rosee_knowledge.db")
+c = conn.cursor()
+
+# Create the knowledge table
+c.execute("DROP TABLE IF EXISTS knowledge")
+c.execute('''CREATE TABLE knowledge (
+    topic TEXT PRIMARY KEY,
+    content TEXT
+)''')
+
+# Insert default knowledge
+default_knowledge = {
+    "electronics": "Electronics involves circuits, resistors, capacitors, microcontrollers like Arduino, and signal flow.",
+    "c++": "C++ is a powerful programming language with object-oriented, procedural, and generic features.",
+    "python": "Python is a high-level, interpreted language used for automation, AI, web development, and more.",
+    "javascript": "JavaScript is used to make web pages interactive and dynamic, often in combination with HTML and CSS.",
+    "communication": "Communication includes verbal, non-verbal, and digital methods to share information effectively."
+}
+
+for topic, content in default_knowledge.items():
+    c.execute("INSERT INTO knowledge (topic, content) VALUES (?, ?)", (topic, content))
+
+conn.commit()
+conn.close()
+
+print("rosee_knowledge.db created with starter knowledge!")
